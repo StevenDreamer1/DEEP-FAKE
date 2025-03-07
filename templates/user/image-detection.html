@@ -1,0 +1,350 @@
+{% load static %}
+<!DOCTYPE html><html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>DeepFakeDetection</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet"> 
+    
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Libraries Stylesheet -->
+    <link href="{% static 'user/lib/lightbox/css/lightbox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'user/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+    
+    
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{% static 'user/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'user/css/style.css' %}" rel="stylesheet">
+    
+    
+    <style>
+        .fake-detection-section {
+            text-align: center;
+            padding: 50px;
+        }
+        
+        #imagePreview {
+            max-width: 100%;
+            max-height: 300px;
+            margin-top: 20px;
+        }
+        .my-btn{
+            background-color: rgba(255, 0, 0,.7);
+        }
+        /* Add your custom CSS styles here */
+        .fake-detection-section {
+            text-align: center;
+            padding:  50px 50px 50px 50px;
+            background-color: #f8f9fa; /* Light gray background */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-40px);
+        }
+        
+        .fake-detection-section h2 {
+            color: #343a40; /* Dark text color */
+        }
+        
+        .fake-detection-section p {
+            color: #6c757d; /* Medium gray text color */
+        }
+        
+        .input-group {
+            margin-top: 20px;
+        }
+        
+        #imageInput {
+            display: none; 
+        }
+        
+        .input-group-text {
+            cursor: pointer;
+            background-color: #007bff; /* Primary color for the upload button */
+            color: #fff; /* White text color */
+            border-color: #007bff; /* Border color */
+        }
+        
+        .input-group-text:hover {
+            background-color: #0056b3; /* Darker color on hover */
+            border-color: #0056b3;
+        }
+        
+        #imagePreview {
+            max-width: 100%;
+            max-height: 300px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-section {
+        border: 2px solid #ddd;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+
+    .result-heading {
+        color: #333;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .fake-image, .real-image {
+        color: #fff;
+        background-color: #f00; 
+        padding: 5px;
+        border-radius: 3px;
+    }
+
+    .real-image {
+        background-color: #0f0;
+        padding: 10px;
+    }
+
+    .undetermined-result {
+        color: #888;
+        font-style: italic;
+    }
+        
+    </style>
+</head>
+
+<body>
+    
+    <!-- Spinner Start -->
+    <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status"></div>
+    </div>
+    <!-- Spinner End -->
+    
+    
+    <!-- Navbar start -->
+    <div class="container-fluid fixed-top">
+        <div class="container topbar bg-primary d-none d-lg-block">
+            <div class="d-flex justify-content-between">
+                
+                <div class="top-link pe-2">
+                    <a href="#" class="text-white"><small class="text-white mx-2">Privacy Policy</small>/</a>
+                    <a href="#" class="text-white"><small class="text-white mx-2">Terms of Use</small>/</a>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="container px-0">
+            <nav class="navbar navbar-light bg-white navbar-expand-xl">
+                <a href="{% url 'user_dashboard' %}"  class="navbar-brand"><h1 class="text-primary display-6">DeepFakeDetection</h1></a>
+                <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars text-primary"></span>
+                </button>
+                <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto">
+                        <a href="{% url 'user_dashboard' %}"  class="nav-item nav-link ">Dashboard</a>
+                        <a href="{% url 'image_detection' %}" class="nav-item nav-link active">Image Detection</a>
+                        <a href="{% url 'video_detection' %}" class="nav-item nav-link">Video Detection</a>
+                        <a href="{% url 'profile' %}" class="nav-item nav-link">Profile</a>
+                        <a href="{% url 'log_out' %}" class="position-relative me-4 my-auto">
+                            <button class="btn btn-success mx-2 my-btn">SignOut</button>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+            
+        </div>
+    </div>
+    <!-- Navbar End -->
+    <!-- Link Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Add your custom JavaScript here -->
+    
+    <!-- Single Product End -->
+    <div class="container mt-5 pt-5" >
+        <div class="row">
+            <div class="col-md-6 mx-auto" style="margin-top: 100px;">
+                <div class="fake-detection-section ">
+                    {% if result is not None %}
+                    <!-- Result section -->
+                    <div class="result-section">
+                        <h4 class="result-heading">Image Detection Result</h4>
+                        {% if result == 0 %}
+                        <h6 class="fake-image"><mark>Fake image</mark></h6>
+                        {% elif result == 1 %}
+                        <h6 class="real-image"><mark>Real image</mark></h6>
+                        {% else %}
+                        <p class="undetermined-result">Unable to determine the result.</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <h2 class="mb-3">Image Fake Detection</h2>
+                    <p>Upload an image to detect if it's fake or real.</p>
+                    <form id="fakeDetectionForm" method="post" enctype="multipart/form-data" action="{% url 'image_detection' %}">
+                        {% csrf_token %}
+                        <div class="input-group mb-3 text-center">
+                            <input type="file" class="form-control" id="imageInput" name="image" accept="image/*">
+                            <label class="input-group-text col-12" for="imageInput"><i class="fas fa-upload"></i></label>
+                        </div>
+                        <img id="imagePreview" src="#" alt="Preview" class="img-fluid d-none"><br>
+                        <button class="btn btn-secondary btn-lg mt-1" id="sub-btn">Submit</button>
+                    </form>
+                    
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        {% if messages %}              
+        {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+        <script>swal({
+            title: "Warning!",
+            text: "{{message}}",
+            icon: "warning",
+            button: "OK",
+        });
+    </script>
+    
+    {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+    <script>swal({
+        title: "Info :)",
+        text: "{{message}}",
+        icon: "info",
+        button: "OK",
+    });
+</script>
+{% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+<script>swal({
+    title: "Error :)",
+    text: "{{message}}",
+    icon: "error",
+    button: "OK",
+});
+</script>
+{% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+<script>swal({
+    title: "Success :)",
+    text: "{{message}}",
+    icon: "success",
+    button: "OK",
+});
+</script>
+{% endif %}              
+{% endfor %} 
+{% endif %}
+    <script>
+        document.getElementById('imageInput').addEventListener('change', function () {
+            var input = this;
+            
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function (e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('imagePreview').classList.remove('d-none');
+                    document.getElementById('sub-btn').classList.remove('d-none');
+                    
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+    </script>
+    
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
+        <div class="container py-5">
+            <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
+                <div class="row g-4">
+                    <div class="col-lg-3">
+                        <a href="#">
+                            <h1 class="text-primary mb-0">DeepFakeDetection</h1>
+                            <p class="text-secondary mb-0">Deep fake detection</p>
+                        </a>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="row g-5">
+                <div class="col-md-6">
+                    <div class="footer-item">
+                        <h4 class="text-light mb-3">Why Choose Our Fake Detection Services?</h4>
+                        <p class="mb-4">Our advanced fake detection services are crafted to ensure the highest accuracy in identifying manipulated content. We leverage cutting-edge technology to safeguard your media and provide trustworthy analysis. Choose us for reliable solutions in combating digital misinformation.</p>
+                        <a href="#" class="btn border-secondary py-2 px-4 rounded-pill text-primary">Explore Our Services</a>
+                    </div>
+                    
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex flex-column text-start footer-item">
+                        <h4 class="text-light mb-3">Usefull Links</h4>
+                        <a class="btn-link" href="">Dashboard</a>
+                        <a class="btn-link" href="">Detection</a>
+                        <a class="btn-link" href="">Profile</a>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="footer-item">
+                        <h4 class="text-light mb-3">Contact</h4>
+                        <p>Address:Lb Nagar </p>
+                        <p>info@codebook.in</p>
+                        <p>+91 8555 8879 86</p>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+    
+    <!-- Copyright Start -->
+    <div class="container-fluid copyright bg-dark py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i>Codebook</a>, All right reserved.</span>
+                </div>
+                <div class="col-md-6 my-auto text-center text-md-end text-white">
+                    Designed And <a class="border-bottom" href="https://codebook.in"></a> Distributed By <a class="border-bottom" href="https://codebook.in">Codebook</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Copyright End -->
+    
+    
+    
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
+    
+    
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'user/lib/easing/easing.min.js' %}"></script>
+    
+    <script src="{% static 'user/lib/waypoints/waypoints.min.js' %}"></script>
+    
+    <script src="{% static 'user/lib/lightbox/js/lightbox.min.js' %}"></script>
+    
+    <script src="{% static 'user/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+    
+    
+    <!-- Template Javascript -->
+    <script src="{% static 'user/js/main.js' %}"></script>
+    
+</body>
+
+</html>
